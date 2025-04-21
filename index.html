@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Card Customizer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .customizer-panel {
+            flex: 1;
+            min-width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .preview-panel {
+            flex: 1;
+            min-width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .checkbox-group input {
+            width: auto;
+        }
+        .image-upload {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .image-preview img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .image-preview .img-container {
+            position: relative;
+        }
+        .image-preview .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .copy-btn {
+            background-color: #2ecc71;
+        }
+        .copy-btn:hover {
+            background-color: #27ae60;
+        }
+        .product-card {
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            margin: 0 auto;
+        }
+        .product-images {
+            position: relative;
+            height: 300px;
+        }
+        .product-images img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .badges {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        .badge.best-seller {
+            background-color: #e67e22;
+        }
+        .badge.discount {
+            background-color: #e74c3c;
+        }
+        .badge.sold-out {
+            background-color: #7f8c8d;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .current-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .old-price {
+            font-size: 16px;
+            color: #95a5a6;
+            text-decoration: line-through;
+        }
+        .discount {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .category {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        .code-output {
+            width: 100%;
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border: 1px solid #ddd;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .auto-discount {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .upload-status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: #ecf0f1;
+            border: none;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: #3498db;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product Card Customizer</h1>
+    
+    <div class="container">
+        <div class="customizer-panel">
+            <h2>Product Details</h2>
+            
+            <div class="form-group">
+                <label for="product-id">Product ID</label>
+                <input type="text" id="product-id" value="7">
+            </div>
+            
+            <div class="form-group">
+                <label for="product-name">Product Name</label>
+                <input type="text" id="product-name" value="Classic Model Scarf">
+            </div>
+            
+            <div class="form-group">
+                <label for="product-category">Category</label>
+                <select id="product-category">
+                    <option value="likra">Likra</option>
+                    <option value="model" selected>Model</option>
+                    <option value="printed model">Printed Model</option>
+                    <option value="sheffon">Sheffon</option>
+                </select>
+            </div>
+            
+            <h2>Pricing</h2>
+            
+            <div class="form-group">
+                <label for="product-price">Current Price</label>
+                <input type="number" id="product-price" value="380">
+            </div>
+            
+            <div class="form-group">
+                <label for="product-old-price">Old Price (optional)</label>
+                <input type="number" id="product-old-price" value="450">
+                <div class="auto-discount" id="discount-calculator">
+                    Discount will be calculated automatically
+                </div>
+            </div>
+            
+            <h2>Images</h2>
+            <div class="upload-status" id="upload-status">Upload photos or add image URLs</div>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="upload-tab">Upload</button>
+                <button class="tab-btn" data-tab="url-tab">URLs</button>
+            </div>
+            
+            <div class="tab-content active" id="upload-tab">
+                <div class="form-group">
+                    <label>Upload Product Photos</label>
+                    <div class="image-upload">
+                        <input type="file" id="file-upload" multiple accept="image/*">
+                        <p>Click to select photos</p>
+                    </div>
+                    <div class="image-preview" id="upload-preview"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="url-tab">
+                <div class="form-group">
+                    <label>Image URLs (one per line)</label>
+                    <textarea id="image-urls" rows="4">https://i.postimg.cc/d01fp69k/IMG-20250416-WA0016.jpg
+https://i.postimg.cc/kgwZTzWP/IMG-20250416-WA0014.jpg</textarea>
+                </div>
+            </div>
+            
+            <h2>Flags</h2>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="is-best-seller" checked>
+                <label for="is-best-seller">Best Seller</label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="has-offer" checked>
+                <label for="has-offer">Has Offer</label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="sold-out">
+                <label for="sold-out">Sold Out</label>
+            </div>
+            
+            <button id="update-btn">Update Preview</button>
+        </div>
+        
+        <div class="preview-panel">
+            <h2>Live Preview</h2>
+            <div id="product-preview">
+                <!-- Preview will be auto-generated here -->
+            </div>
+            
+            <h2>Generated Code</h2>
+            <div class="code-output" id="code-output">
+                Your generated code will appear here
+            </div>
+            <div class="button-group">
+                <button id="copy-btn" class="copy-btn">Copy Code</button>
+                <button id="generate-btn">Generate New Card</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all form elements
+            const productId = document.getElementById('product-id');
+            const productName = document.getElementById('product-name');
+            const productCategory = document.getElementById('product-category');
+            const productPrice = document.getElementById('product-price');
+            const productOldPrice = document.getElementById('product-old-price');
+            const discountCalculator = document.getElementById('discount-calculator');
+            const uploadStatus = document.getElementById('upload-status');
+            const isBestSeller = document.getElementById('is-best-seller');
+            const hasOffer = document.getElementById('has-offer');
+            const soldOut = document.getElementById('sold-out');
+            const generateBtn = document.getElementById('generate-btn');
+            const updateBtn = document.getElementById('update-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const productPreview = document.getElementById('product-preview');
+            const codeOutput = document.getElementById('code-output');
+            const fileUpload = document.getElementById('file-upload');
+            const uploadPreview = document.getElementById('upload-preview');
+            const imageUrls = document.getElementById('image-urls');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            let uploadedImages = [];
+            let useUploadedImages = true;
+            
+            // Tab switching
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    button.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Update which images we're using
+                    useUploadedImages = tabId === 'upload-tab';
+                    updatePreview();
+                });
+            });
+            
+            // Calculate discount whenever prices change
+            function calculateDiscount() {
+                const price = parseFloat(productPrice.value) || 0;
+                const oldPrice = parseFloat(productOldPrice.value) || 0;
+                
+                if (oldPrice > price) {
+                    const discount = Math.round(((oldPrice - price) / oldPrice) * 100);
+                    discountCalculator.textContent = `Auto Discount: ${discount}% OFF ($${oldPrice} → $${price})`;
+                    hasOffer.checked = true;
+                } else {
+                    discountCalculator.textContent = 'No discount (old price must be higher than current price)';
+                    hasOffer.checked = false;
+                }
+            }
+            
+            // Add event listeners for price changes
+            productPrice.addEventListener('input', calculateDiscount);
+            productOldPrice.addEventListener('input', calculateDiscount);
+            
+            // Handle file uploads
+            fileUpload.addEventListener('change', function(e) {
+                const files = e.target.files;
+                uploadPreview.innerHTML = '';
+                uploadedImages = [];
+                
+                if (files.length > 0) {
+                    uploadStatus.textContent = `${files.length} photo(s) uploaded`;
+                    uploadStatus.style.color = '#27ae60';
+                    
+                    Array.from(files).forEach((file, index) => {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            uploadedImages.push(e.target.result);
+                            
+                            // Create image preview with remove button
+                            const imgContainer = document.createElement('div');
+                            imgContainer.className = 'img-container';
+                            
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-btn';
+                            removeBtn.innerHTML = '×';
+                            removeBtn.onclick = function() {
+                                imgContainer.remove();
+                                uploadedImages = uploadedImages.filter(img => img !== e.target.result);
+                                uploadStatus.textContent = `${uploadedImages.length} photo(s) uploaded`;
+                                if (uploadedImages.length === 0) {
+                                    uploadStatus.textContent = 'Upload photos or add image URLs';
+                                    uploadStatus.style.color = '#7f8c8d';
+                                }
+                                updatePreview();
+                            };
+                            
+                            imgContainer.appendChild(img);
+                            imgContainer.appendChild(removeBtn);
+                            uploadPreview.appendChild(imgContainer);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    });
+                } else {
+                    uploadStatus.textContent = 'Upload photos or add image URLs';
+                    uploadStatus.style.color = '#7f8c8d';
+                }
+                
+                updatePreview();
+            });
+            
+            // Update image URLs when changed
+            imageUrls.addEventListener('input', updatePreview);
+            
+            // Update preview function
+            function updatePreview() {
+                // Get all values
+                const id = productId.value;
+                const name = productName.value;
+                const category = productCategory.value;
+                const price = parseFloat(productPrice.value);
+                const oldPrice = productOldPrice.value ? parseFloat(productOldPrice.value) : null;
+                const images = useUploadedImages ? 
+                    (uploadedImages.length ? uploadedImages : []) : 
+                    imageUrls.value.split('\n').filter(url => url.trim() !== '');
+                const bestSeller = isBestSeller.checked;
+                const offer = hasOffer.checked;
+                const isSoldOut = soldOut.checked;
+                
+                // Calculate discount percentage if old price exists
+                let discountPercentage = '';
+                if (oldPrice && oldPrice > price) {
+                    const discount = Math.round(((oldPrice - price) / oldPrice) * 100);
+                    discountPercentage = discount + '% OFF';
+                }
+                
+                // Generate preview HTML
+                let previewHtml = `
+                    <div class="product-card" id="${id}">
+                        <div class="product-images">
+                            ${images.length > 0 ? `<img src="${images[0]}" alt="${name}">` : '<div style="background:#eee;height:100%;display:flex;align-items:center;justify-content:center;color:#95a5a6;">No Image</div>'}
+                            <div class="badges">
+                                ${bestSeller ? '<span class="badge best-seller">Best Seller</span>' : ''}
+                                ${discountPercentage ? '<span class="badge discount">' + discountPercentage + '</span>' : ''}
+                                ${isSoldOut ? '<span class="badge sold-out">Sold Out</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${name}</div>
+                            <div class="category">${category}</div>
+                            <div class="price-container">
+                                <span class="current-price">$${price.toFixed(2)}</span>
+                                ${oldPrice ? `<span class="old-price">$${oldPrice.toFixed(2)}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                productPreview.innerHTML = previewHtml;
+                
+                // Generate the code output
+                const productData = {
+                    id: id,
+                    name: name,
+                    price: price,
+                    oldPrice: oldPrice || undefined,
+                    category: category,
+                    images: images.length ? images : undefined,
+                    discount: discountPercentage || undefined,
+                    isBestSeller: bestSeller,
+                    hasOffer: offer,
+                    soldOut: isSoldOut
+                };
+                
+                // Clean up undefined values
+                Object.keys(productData).forEach(key => {
+                    if (productData[key] === undefined) {
+                        delete productData[key];
+                    }
+                });
+                
+                // Format JSON with comma after closing brace
+                let jsonString = JSON.stringify(productData, null, 2);
+                jsonString = jsonString + ','; // Add comma after closing brace
+                
+                codeOutput.textContent = jsonString;
+            }
+            
+            // Copy code to clipboard
+            copyBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText(codeOutput.textContent)
+                    .then(() => {
+                        const originalText = copyBtn.textContent;
+                        copyBtn.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyBtn.textContent = originalText;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+            });
+            
+            // Generate new card (reset form)
+            generateBtn.addEventListener('click', function() {
+                productId.value = '';
+                productName.value = '';
+                productCategory.value = 'model';
+                productPrice.value = '';
+                productOldPrice.value = '';
+                fileUpload.value = '';
+                imageUrls.value = '';
+                uploadedImages = [];
+                uploadPreview.innerHTML = '';
+                isBestSeller.checked = false;
+                hasOffer.checked = false;
+                soldOut.checked = false;
+                uploadStatus.textContent = 'Upload photos or add image URLs';
+                uploadStatus.style.color = '#7f8c8d';
+                
+                // Switch to first tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                tabButtons[0].classList.add('active');
+                tabContents[0].classList.add('active');
+                useUploadedImages = true;
+                
+                updatePreview();
+            });
+            
+            // Update preview when any input changes
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                element.addEventListener('input', updatePreview);
+            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(element => {
+                element.addEventListener('change', updatePreview);
+            });
+            
+            // Initialize
+            calculateDiscount();
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
