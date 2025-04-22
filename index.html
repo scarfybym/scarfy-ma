@@ -490,7 +490,7 @@ https://i.postimg.cc/kgwZTzWP/IMG-20250416-WA0014.jpg</textarea>
                 // Get all values
                 const id = productId.value;
                 const name = productName.value;
-                const category = productCategory.value;
+                let category = productCategory.value;
                 const price = parseFloat(productPrice.value);
                 const oldPrice = productOldPrice.value ? parseFloat(productOldPrice.value) : null;
                 const images = useUploadedImages ? 
@@ -499,6 +499,9 @@ https://i.postimg.cc/kgwZTzWP/IMG-20250416-WA0014.jpg</textarea>
                 const bestSeller = isBestSeller.checked;
                 const offer = hasOffer.checked;
                 const isSoldOut = soldOut.checked;
+                
+                // Modify category if "printed model" is selected
+                const displayCategory = category === 'printed model' ? 'printed' : category;
                 
                 // Calculate discount percentage if old price exists
                 let discountPercentage = '';
@@ -537,7 +540,7 @@ https://i.postimg.cc/kgwZTzWP/IMG-20250416-WA0014.jpg</textarea>
                     name: name,
                     price: price,
                     oldPrice: oldPrice || undefined,
-                    category: category,
+                    category: displayCategory, // Use the modified category here
                     images: images.length ? images : undefined,
                     discount: discountPercentage || undefined,
                     isBestSeller: bestSeller,
